@@ -1,0 +1,25 @@
+﻿@model DAN.Areas.System.Models.LoginViewModel
+@{
+    ViewBag.Title = "Login";
+}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-sm-3 hidden-xs"></div>
+        <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="title">Login Admin Cpanel</div>
+            @using (Html.BeginForm("Login", "Home",FormMethod.Post, new { @class = "my-form"}))
+            {
+                @Html.AntiForgeryToken();
+                @Html.ValidationSummary(true)
+                @Html.LabelFor(e => e.Uname)
+                @Html.ValidationMessageFor(e => e.Uname)
+                @Html.TextBoxFor(e => e.Uname)
+                @Html.LabelFor(e => e.Upass)
+                @Html.ValidationMessageFor(e => e.Upass)
+                @Html.PasswordFor(e => e.Upass)
+                <button>Login</button>
+            }
+        </div>
+        <div class="col-md-4 col-sm-3 hidden-xs"></div>
+    </div>
+</div>
