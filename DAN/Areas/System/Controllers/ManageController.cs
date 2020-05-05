@@ -130,6 +130,10 @@ namespace DAN.Areas.System.Controllers
         [AjaxOnly]
         public ActionResult GetProduct(int page = 0)
         {
+            //int pageSize = 10;
+            //int pageIndex = 1;
+            //pageIndex = page.HasValue ? Convert.ToInt32(page) : 1;
+            //IpageList
             var model = new DAN.Models.IndexViewModel();
             int numPerPage = 10;
             model.product = db.Products.OrderByDescending(e => e.PId).Skip(page * numPerPage).Take(numPerPage);

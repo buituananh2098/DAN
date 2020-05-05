@@ -2,7 +2,8 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>@ViewBag.Title - Admin Cpanel</title>
+    <link rel="shortcut icon" type="image/png" href="~/assets/images/android-icon-36x36.png" />
+    <title>@ViewBag.Title - Admin Tuấn Anh</title>
     @Styles.Render("~/Styles/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
@@ -10,10 +11,14 @@
     <header id="header">
         @if (User.Identity.IsAuthenticated)
         {
-           <h3 style="float: left">Xin chào, @User.Identity.Name! <a href="@Url.Action("Logout", "Home")">Thoát</a></h3>
-           <h3 style="float: right"><a href="@Url.Action("Index", "Manage")">Bảng điều khiển</a></h3>
+           <h3 style="float:left; #339900; border-radius: 20px; text-align: center;padding: 10px;margin-right: 20px;">Xin chào, @User.Identity.Name! <a style="background: #339900; border-radius: 20px; text-align: center;padding: 10px; color: #FFF;margin-right: 20px;" href="@Url.Action("Logout", "Home")">Thoát</a></h3>
+           <h3 style="float: right">
+            <a style="background: #339900; border-radius: 20px; text-align: center;padding: 10px; color: #FFF;margin-right: 20px;" href="@Url.Action("Index", "Manage")">
+                   Bảng điều khiển
+            </a>
+           </h3>
         }
-        <a href="~/Areas/System/Views/Home/Login.cshtml">Đăng nhập </a>
+        @*<a href="~/Areas/System/Views/Home/Login.cshtml">Đăng nhập </a>*@
     </header>
     <div id="content">
         @RenderBody()

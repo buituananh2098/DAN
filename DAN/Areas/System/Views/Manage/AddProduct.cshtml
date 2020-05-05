@@ -14,7 +14,7 @@
             @Html.TextBoxFor(e => e.Pname)
             @Html.LabelFor(e => e.Pdesc)
             @Html.ValidationMessageFor(e => e.Pdesc)
-            @Html.TextAreaFor(e => e.Pdesc)
+            @Html.TextAreaFor(e => e.Pdesc,new {style = "width:50% !important;height: 100px ;"})
             @Html.LabelFor(e => e.Price)
             @Html.ValidationMessageFor(e => e.Price)
             @Html.TextBoxFor(e => e.Price)

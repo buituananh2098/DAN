@@ -12,6 +12,9 @@ namespace DAN.Controllers
 {
     public class OrderController : Controller
     {
+        private string hashSecret;
+        private string secureHash;
+
         DANEntities db = new DANEntities();
         [HttpGet]
         public ActionResult Index()
@@ -50,9 +53,10 @@ namespace DAN.Controllers
 
             return View("Index");
         }
-
-        private void setDataVnPay()
+        private void setDataVnPay(long OId,string PaidInfo,decimal Amount)
         {
+            DateTime dateTime = DateTime.Now;
+            Int32 now =(Int32)DateTime.UtcNow.Subtract(new DateTime(dateTime.Year, dateTime.Month,dateTime.Day)).TotalSeconds;
             string vnp_Returnurl = ConfigurationManager.AppSettings["vnp_Returnurl"]; //URL nhan ket qua tra ve 
             string vnp_Url = ConfigurationManager.AppSettings["vnp_Url"]; //URL thanh toan cua VNPAY 
             string vnp_TmnCode = ConfigurationManager.AppSettings["vnp_TmnCode"]; //Ma website
@@ -75,23 +79,85 @@ namespace DAN.Controllers
             }
 
             vnpay.AddRequestData("vnp_CurrCode", "VND");
-            //vnpay.AddRequestData("vnp_TxnRef", order.OrderId.ToString());
-            //vnpay.AddRequestData("vnp_OrderInfo", order.OrderDescription);
-            //vnpay.AddRequestData("vnp_OrderType", orderCategory.SelectedItem.Value); //default value: other
-            //vnpay.AddRequestData("vnp_Amount", (order.Amount * 100).ToString());
-            //vnpay.AddRequestData("vnp_ReturnUrl", vnp_Returnurl);
-            //vnpay.AddRequestData("vnp_IpAddr", Utils.GetIpAddress());
-            //vnpay.AddRequestData("vnp_CreateDate", order.CreatedDate.ToString("yyyyMMddHHmmss"));
+            vnpay.AddRequestData("vnp_TxnRef", now + OId.ToString());
+            vnpay.AddRequestData("vnp_OrderInfo", PaidInfo);
+            vnpay.AddRequestData("vnp_OrderType", "100001"); //default value: other
+            vnpay.AddRequestData("vnp_Amount", (Convert.ToInt64(Amount)* 100).ToString());
+            vnpay.AddRequestData("vnp_ReturnUrl", vnp_Returnurl);
+            vnpay.AddRequestData("vnp_IpAddr", Utils.GetIpAddress());
+            vnpay.AddRequestData("vnp_CreateDate", dateTime.ToString("yyyyMMddHHmmss"));
 
-            //if (bank.SelectedItem != null && !string.IsNullOrEmpty(bank.SelectedItem.Value))
-            //{
-            //    vnpay.AddRequestData("vnp_BankCode", bank.SelectedItem.Value);
-            //}
+            string paymenturl = vnpay.CreateRequestUrl(vnp_Url, vnp_HashSecret);
+            Response.Redirect(paymenturl);
 
-            //string paymentUrl = vnpay.CreateRequestUrl(vnp_Url, vnp_HashSecret);
-            //log.InfoFormat("VNPAY URL: {0}", paymentUrl);
-            //Response.Redirect(paymentUrl);
+        }
 
+        //public ActionResult ReturnPayMent()
+        //{
+        //    if (checkpayment() == true)
+        //    {
+        //        return RedirectToAction("ReturnVNPay");
+        //        //return View("KetQua");
+        //    }
+        //    return RedirectToAction("Index");
+
+        //}
+        VnPayLibrary vnpay = new VnPayLibrary();
+
+      
+        public ActionResult ReturnPayMent()
+        {
+            string error = "Thanh toán không thành công!";
+            if (Request.QueryString.Count > 0)
+            {
+                string vnp_HashSecret = ConfigurationManager.AppSettings["vnp_HashSecret"]; //Chuoi bi mat
+                var vnpayData = Request.QueryString;
+                long OId = db.Orders.Max(x => x.Id);
+                var result = db.Orders.First(x => x.Id == OId);
+               
+                //if (vnpayData.Count > 0)
+                //{
+                foreach (string s in vnpayData)
+                {
+                    //get all querystring data
+                    if (!string.IsNullOrEmpty(s) && s.StartsWith("vnp_"))
+                    {
+                        vnpay.AddResponseData(s, vnpayData[s]);
+                    }
+                }
+                // }
+
+                //vnp_TxnRef: Ma don hang merchant gui VNPAY tai command=pay    
+                long orderId = Convert.ToInt64(vnpay.GetResponseData("vnp_TxnRef"));
+                //vnp_TransactionNo: Ma GD tai he thong VNPAY
+                long vnpayTranId = Convert.ToInt64(vnpay.GetResponseData("vnp_TransactionNo"));
+                //vnp_ResponseCode:Response code from VNPAY: 00: Thanh cong, Khac 00: Xem tai lieu
+                string vnp_ResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
+                //vnp_SecureHash: MD5 cua du lieu tra ve
+                String vnp_SecureHash = Request.QueryString["vnp_SecureHash"];
+                hashSecret = vnp_HashSecret;
+                    secureHash = vnp_SecureHash;
+                bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, vnp_HashSecret);
+                if (checkSignature)
+                {
+                    if (vnp_ResponseCode == "00")
+                    {
+                        return View("ReturnVNPay", result);
+                    }
+                    else
+                    {
+                        return View("ReturnVNPay");
+                    }
+                }
+                else
+                {
+                    return View("ReturnVNPay");
+                }
+            }
+            else
+            {
+                return View("ReturnVNPay");
+            }
         }
 
         [HttpPost]
@@ -100,7 +166,6 @@ namespace DAN.Controllers
         {
             var user = (OrderViewModel)Session["User"];
             var cart = (List<Product>)Session["Cart"];
-            setDataVnPay();
             try
             {
                 var order = new Order()
@@ -115,6 +180,8 @@ namespace DAN.Controllers
                     TotalPrice = cart.Sum(e => e.Quantum * e.SalePrice),
                     PaidInfo = user.PaidInfo
                 };
+                setDataVnPay(order.Id, user.PaidInfo, cart.Sum(e => e.Quantum * e.SalePrice));
+                //bool checkSignature = vnpay.ValidateSignature(secureHash, hashSecret);
                 db.Orders.Add(order);
                 db.SaveChanges();
                 foreach (var item in cart)
@@ -125,7 +192,8 @@ namespace DAN.Controllers
                         OId = order.Id,
                         Quantum = item.Quantum,
                         Price = item.Quantum * item.SalePrice
-                    });
+                });
+                    
                     db.SaveChanges();
                 }
                 Session.Remove("Cart");
@@ -190,5 +258,9 @@ namespace DAN.Controllers
             }
             return Redirect(returnUrl);
         }
+
+        //private string HashSecret { get => _hashSecret; set => _hashSecret = value; }
+        //private string SecureHash { get => secureHash; set => secureHash = value; }
+
     }
 }

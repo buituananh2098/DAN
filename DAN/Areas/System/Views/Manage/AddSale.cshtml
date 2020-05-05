@@ -14,7 +14,7 @@
             @Html.TextBoxFor(e => e.Title)
             @Html.LabelFor(e => e.Content)
             @Html.ValidationMessageFor(e => e.Content)
-            @Html.TextAreaFor(e => e.Content)
+            @Html.TextAreaFor(e => e.Content,new {style = "width:50% !important;height: 100px ;"})
             <button>Thêm mới</button>
         }
     </div>

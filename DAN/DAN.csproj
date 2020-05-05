@@ -169,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="assets\images\android-icon-36x36.png" />
     <Content Include="assets\images\bg.png" />
     <Content Include="assets\images\cart-circle.png" />
     <Content Include="assets\images\dan.png" />
@@ -385,6 +386,8 @@
     <Content Include="Models\DANModel.edmx.diagram">
       <DependentUpon>DANModel.edmx</DependentUpon>
     </Content>
+    <Content Include="libman.json" />
+    <Content Include="Views\Order\ReturnVNPay.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

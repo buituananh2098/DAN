@@ -17,7 +17,7 @@
                 {
                     @: Hóa đơn sẽ được gửi vào email <b>@Model.email</b><br />
                 }
-                Tổng giá trị đơn hàng: <b style="color: red;">@String.Format("{0:0,0}", ((List<DAN.Models.Product>)Session["Cart"])?.Sum(e => e.Quantum * e.Price)) VND</b>
+                Tổng giá trị đơn hàng: <b style="color: red;">@String.Format("{0:0,0}", ((List<DAN.Models.Product>)Session["Cart"]).Sum(e => e.Quantum * e.Price)) VND</b>
                 @using (Html.BeginForm("Done", "Order"))
                 {
                     @Html.AntiForgeryToken()

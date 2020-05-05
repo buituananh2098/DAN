@@ -15,19 +15,19 @@
             @Html.ValidationSummary(true)
             @Html.LabelFor(e => e.fullName)
             @Html.ValidationMessageFor(e => e.fullName)
-            @Html.TextBoxFor(e => e.fullName, new { @value = Session["User"] != null ? Model?.fullName : "" })
+            @Html.TextBoxFor(e => e.fullName, new { @value = Session["User"] != null ? Model.fullName : "" })
 
             @Html.LabelFor(e => e.adress)
             @Html.ValidationMessageFor(e => e.adress)
-            @Html.TextBoxFor(e => e.adress, new { @value = Session["User"] != null ? Model?.adress : "" })
+            @Html.TextBoxFor(e => e.adress, new { @value = Session["User"] != null ? Model.adress : "" })
 
             @Html.LabelFor(e => e.phone)
             @Html.ValidationMessageFor(e => e.phone)
-            @Html.TextBoxFor(e => e.phone, new { @value = Session["User"] != null ? Model?.phone : 0 })
+            @Html.TextBoxFor(e => e.phone, new { @value = Session["User"] != null ? Model.phone : 0 })
 
             @Html.LabelFor(e => e.email)
             @Html.ValidationMessageFor(e => e.email)
-            @Html.TextBoxFor(e => e.email, new { @value = Session["User"] != null ? Model?.email : "" })
+            @Html.TextBoxFor(e => e.email, new { @value = Session["User"] != null ? Model.email : "" })
 
             @Html.LabelFor(e => e.Code)
             @Html.ValidationMessageFor(e => e.Code)
@@ -47,7 +47,7 @@
                         <span>COD - Thanh toán khi nhận hàng</span>
                     </div>*@
                     <div class="payment-type">
-                        <span>Tổng đơn hàng: <b style="color: red">@String.Format("{0:0,0}", ((List<DAN.Models.Product>)Session["Cart"])?.Sum(e => e.Quantum * e.Price)) VND</b></span>
+                        <span>Tổng đơn hàng: <b style="color: red">@String.Format("{0:0,0}", ((List<DAN.Models.Product>)Session["Cart"]).Sum(e => e.Quantum * e.Price)) VND</b></span>
                     </div>
                 </div>
             </div>
