@@ -47,10 +47,10 @@
                         }
                     </div>
                     <div class="product-price">
-                        <span class="price">@String.Format("{0:0,0}", Model.product.SalePrice) VND</span>
+                        <span class="price">@String.Format("{0:0,0}", Model.product.SalePrice) VNĐ</span>
                         @if (Model.product.Sale > 0)
                         {
-                            <span class="pre-price"><span>@String.Format("{0:0,0}", Model.product.Price) VND</span> -@Model.product.Sale%</span>
+                            <span class="pre-price"><span>@String.Format("{0:0,0}", Model.product.Price) VNĐ</span> -@Model.product.Sale%</span>
                         }
                     </div>
                     <div class="product-number">
@@ -105,10 +105,10 @@
                                 <a href="/Product/Index/@item.PId">@item.Pname</a>
                             </div>
                             <div class="product-price">
-                                <span class="price">@item.Price VND</span>
+                                <span class="price">@String.Format("{0:0,0}", @item.Price) VNĐ</span>
                                 @if (item.Sale > 0)
                                 {
-                                    <span class="pre-price"><span>@item.Price VND</span> -@item.Sale%</span>
+                                    <span class="pre-price"><span>@String.Format("{0:0,0}",@item.Price) VND</span> -@item.Sale%</span>
                                 }
                             </div>
                         </div>

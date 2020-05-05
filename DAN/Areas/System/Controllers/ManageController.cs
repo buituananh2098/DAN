@@ -22,12 +22,20 @@ namespace DAN.Areas.System.Controllers
         {
             int numPerPage = 10;
             var model = db.Orders.OrderByDescending(e => e.Id).Skip(page * numPerPage).Take(numPerPage);
-            ViewBag.total = model.Count()/numPerPage;
+            int total = db.Orders.ToList().Count / numPerPage;
+            ViewBag.total = total;
+            //ViewBag.total = model.Count()/numPerPage;
             ViewBag.currentPage = page;
             return PartialView(model);
         }
         public ActionResult Category()
         {
+            //int numPerPage = 10;
+            //var model = new DAN.Models.CategoryViewModel();
+            //int total = db.Categories.ToList().Count / numPerPage;
+            //model.category = db.Categories.OrderByDescending(e => e.CId).Skip(page * numPerPage).Take(numPerPage).ToList();
+            //model.total = total;
+            //model.currentPage = page;
             IEnumerable<DAN.Models.Category> model = db.Categories;
             return View(model);
         }
@@ -130,15 +138,17 @@ namespace DAN.Areas.System.Controllers
         [AjaxOnly]
         public ActionResult GetProduct(int page = 0)
         {
-            //int pageSize = 10;
-            //int pageIndex = 1;
-            //pageIndex = page.HasValue ? Convert.ToInt32(page) : 1;
-            //IpageList
-            var model = new DAN.Models.IndexViewModel();
             int numPerPage = 10;
-            model.product = db.Products.OrderByDescending(e => e.PId).Skip(page * numPerPage).Take(numPerPage);
-            model.total = model.product.Count()/numPerPage;
+            var model = new DAN.Models.IndexViewModel();
+            int total = db.Products.ToList().Count / numPerPage;
+            model.product = db.Products.OrderByDescending(e => e.PId).Skip(page * numPerPage).Take(numPerPage).ToList();
+            model.total = total;
             model.currentPage = page;
+            //var model = new DAN.Models.IndexViewModel();
+            //int numPerPage = 10;
+            //model.product = db.Products.OrderByDescending(e => e.PId).Skip(page * numPerPage).Take(numPerPage).ToList();
+            //model.total = model.product.Count() / numPerPage;
+            //model.currentPage = page;
             return PartialView(model);
         }
         [HttpGet]
@@ -263,6 +273,29 @@ namespace DAN.Areas.System.Controllers
         }
         public ActionResult Sale()
         {
+            //int numPerPage = 10;
+            //var model = db.Orders.OrderByDescending(e => e.Id).Skip(page * numPerPage).Take(numPerPage);
+            //int total = db.Orders.ToList().Count / numPerPage;
+            //ViewBag.total = total;
+            ////ViewBag.total = model.Count()/numPerPage;
+            //ViewBag.currentPage = page;
+            //return PartialView(model);
+
+
+            //int numPerPage = 3;
+            //var model = new DAN.Models.IndexViewModel();
+            //int total = db.Sales.ToList().Count / numPerPage;
+            //model.sale = db.Sales.OrderByDescending(e => e.Id).Skip(page * numPerPage).Take(numPerPage).ToList();
+            //model.total = total;
+            //model.currentPage = page;
+            //var model = db.Sales.ToList();
+            //int numperpage = 2;
+            //var model = db.Sales.OrderByDescending(e => e.Id).Skip(page * numperpage).Take(numperpage);
+            //int total = db.Sales.ToList().Count / numperpage;
+            //ViewBag.total = total;
+            //viewbag.total = model.count() / numperpage;
+            //ViewBag.currentPage = page;
+            //return View(model);
             var model = db.Sales.ToList();
             return View(model);
         }

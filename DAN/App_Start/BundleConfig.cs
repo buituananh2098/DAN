@@ -31,5 +31,6 @@ namespace DAN
                       "~/assets/Styles/bootstrap.css",
                       "~/assets/Styles/style.css"));
         }
+		
     }
 }

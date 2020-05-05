@@ -45,5 +45,6 @@
       "termSemicolons": true,
       "gzip": false
     }
+	
   }
 }

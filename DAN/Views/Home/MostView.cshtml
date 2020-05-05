@@ -24,13 +24,14 @@
                 <a href="/Product/Index/@item.PId">@item.Pname</a>
             </div>
             <div class="product-price">
-                <span class="price">@String.Format("{0:0,0}", item.SalePrice) VND</span>
+                <span class="price">@String.Format("{0:0,0}", item.SalePrice) VNĐ</span>
                 @if (item.Sale > 0)
                 {
-                    <span class="pre-price"><span>@String.Format("{0:0,0}", item.Price) VND</span> -@item.Sale%</span>
+                    <span class="pre-price"><span>@String.Format("{0:0,0}", item.Price) VNĐ</span> -@item.Sale%</span>
                 }
             </div>
         </div>
     }
 </div>
-@Html.Paging(Model.currentPage, Model.total, "loadMostView")
+    @Html.Paging(Model.currentPage, Model.total, "loadMostView")
+

@@ -17,7 +17,7 @@ namespace DAN.Controllers
         [AjaxOnly]
         public ActionResult NewProduct(int page = 0)
         {
-            int numPerPage = 12;
+            int numPerPage = 8;
             IndexViewModel model = new IndexViewModel();
             int total = db.Products.ToList().Count / numPerPage;
             model.product = db.Products.OrderByDescending(e => e.PId).Skip(page * numPerPage).Take(numPerPage).ToList();
@@ -28,7 +28,7 @@ namespace DAN.Controllers
         [AjaxOnly]
         public ActionResult MostView(int page = 0)
         {
-            int numPerPage = 12;
+            int numPerPage = 8;
             IndexViewModel model = new IndexViewModel();
             int total = db.Products.ToList().Count / numPerPage;
             model.product = db.Products.OrderByDescending(e => e.View).Skip(page * numPerPage).Take(numPerPage).ToList();

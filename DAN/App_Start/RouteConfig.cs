@@ -18,7 +18,7 @@ namespace DAN
                 url: "Home/Chinh-Sach-Van-Chuyen",
                 defaults: new { controller = "Home", action = "VanChuyen" },
                 namespaces: new string[] { "DAN.Controllers" }
-            );
+            ); 
             routes.MapRoute(
                name: "Default3",
                url: "Order/Invoice/{OId}",
@@ -40,4 +40,5 @@ namespace DAN
             
         }
     }
+	
 }
