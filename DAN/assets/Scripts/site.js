@@ -67,6 +67,17 @@ function loadNewProduct(i) {
         }
     });
 }
+
+
+function loadSearchView(i) {
+    $.ajax({
+        url: "/Home/SearchProduct",
+        data: { page: i },
+        success: function (result) {
+            $("#product").html(result);
+        }
+    });
+}
 function loadMostView(i) {
     $.ajax({
         url: "/Home/MostView",

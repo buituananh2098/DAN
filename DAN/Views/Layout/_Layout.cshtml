@@ -19,7 +19,7 @@
         }
         <header id="header">
             <div class="container">
-                <div class="row">
+                <div class="row"  style="width: 120% !important;">
                     <div class="col-lg-12">
                         <div class="col-md-5 col-sm-6 col-xs-12">
                             <a href="/"><div class="logo" style="background-image: url(/images/av4.png);"></div></a>
@@ -83,6 +83,14 @@
                                         <a href="/Home/LienHe">Liên hệ cửa hàng</a>
                                     </li>
                                 </ul>
+                            </div>
+                            <div style="display: block;padding-top: 12px;">
+                                @using (Html.BeginForm("SearchProduct", "Home", FormMethod.Get)) // -- phần thay đổi
+                                {
+                                    <p>
+                                        @Html.TextBox("searchStr", null,new {style = "max-width:100% !important;",@placeholder = "Tìm kiếm"}) <input style="display: contents;" type="submit" value="Tìm kiếm" />
+                                    </p>
+                                }
                             </div>
                         </div>
                     </div>

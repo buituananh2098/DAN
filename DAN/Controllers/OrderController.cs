@@ -12,9 +12,6 @@ namespace DAN.Controllers
 {
     public class OrderController : Controller
     {
-        private string hashSecret;
-        private string secureHash;
-
         DANEntities db = new DANEntities();
         [HttpGet]
         public ActionResult Index()
@@ -110,11 +107,12 @@ namespace DAN.Controllers
             string error = "Thanh toán không thành công!";
             if (Request.QueryString.Count > 0)
             {
+                string dataAsString = Request.Cookies["StoreCookies"].Value;
+                List<string> data = new List<string>();
+                data.AddRange(dataAsString.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
                 string vnp_HashSecret = ConfigurationManager.AppSettings["vnp_HashSecret"]; //Chuoi bi mat
                 var vnpayData = Request.QueryString;
-                long OId = db.Orders.Max(x => x.Id);
-                var result = db.Orders.First(x => x.Id == OId);
-               
+
                 //if (vnpayData.Count > 0)
                 //{
                 foreach (string s in vnpayData)
@@ -135,13 +133,48 @@ namespace DAN.Controllers
                 string vnp_ResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
                 //vnp_SecureHash: MD5 cua du lieu tra ve
                 String vnp_SecureHash = Request.QueryString["vnp_SecureHash"];
-                hashSecret = vnp_HashSecret;
-                    secureHash = vnp_SecureHash;
                 bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, vnp_HashSecret);
                 if (checkSignature)
                 {
+                    var user = (OrderViewModel)Session["User"];
+                    var cart = (List<Product>)Session["Cart"];
                     if (vnp_ResponseCode == "00")
                     {
+                        var order = new Order()
+                        {
+                            Prefix = "BTA-",
+                            Fullname = data[0],
+                            Address = data[1],
+                            Phone = data[2],
+                            Email = data[3],
+                            Code = data[4],
+                            Status = true,
+                            Paid = true,
+                            CreatOn = DateTime.Now,
+                            TotalPrice = Convert.ToDecimal(data[5]),
+                            PaidInfo = data[6]
+                        };
+
+                        db.Orders.Add(order);
+                        db.SaveChanges();
+                        foreach (var item in cart)
+                        {
+                            db.OrderDetails.Add(new OrderDetail()
+                            {
+                                Pname = item.Pname,
+                                OId = order.Id,
+                                Quantum = item.Quantum,
+                                Price = item.Quantum * item.SalePrice
+                            });
+
+                            db.SaveChanges();
+                        }
+
+                        long OId = db.Orders.Max(x => x.Id);
+
+                        var result = db.Orders.First(x => x.Id == OId);
+
+                        Session.Remove("Cart");
                         return View("ReturnVNPay", result);
                     }
                     else
@@ -170,7 +203,7 @@ namespace DAN.Controllers
             {
                 var order = new Order()
                 {
-                    Prefix = "DAN-",
+                    Prefix = "BTA-",
                     Fullname = user.fullName,
                     Address = user.adress,
                     Phone = user.phone.ToString(),
@@ -180,23 +213,42 @@ namespace DAN.Controllers
                     TotalPrice = cart.Sum(e => e.Quantum * e.SalePrice),
                     PaidInfo = user.PaidInfo
                 };
+                HttpCookie httpCookie = new HttpCookie("StoreCookies");
+                DateTime now = DateTime.Now;
+
+                // Set the cookie value.
+                List<String> listData = new List<string>();
+                listData.Add(user.fullName);
+                listData.Add(user.adress);
+                listData.Add(user.phone.ToString());
+                listData.Add(user.email);
+                listData.Add(user.Code ?? "Không sử dụng");
+                listData.Add(cart.Sum(e => e.Quantum * e.SalePrice).ToString());
+                listData.Add(user.PaidInfo);
+                string dataAsString = listData.Aggregate((a, b) => a = a + "," + b);
+                httpCookie.Value = dataAsString;
+                // Set the cookie expiration date.
+                httpCookie.Expires = now.AddSeconds(180); // For a cookie to effectively never expire
+
+                // Add the cookie.
+                Response.Cookies.Add(httpCookie);
                 setDataVnPay(order.Id, user.PaidInfo, cart.Sum(e => e.Quantum * e.SalePrice));
                 //bool checkSignature = vnpay.ValidateSignature(secureHash, hashSecret);
-                db.Orders.Add(order);
-                db.SaveChanges();
-                foreach (var item in cart)
-                {
-                    db.OrderDetails.Add(new OrderDetail()
-                    {
-                        Pname = item.Pname,
-                        OId = order.Id,
-                        Quantum = item.Quantum,
-                        Price = item.Quantum * item.SalePrice
-                });
+                //db.Orders.Add(order);
+                //db.SaveChanges();
+                //foreach (var item in cart)
+                //{
+                //    db.OrderDetails.Add(new OrderDetail()
+                //    {
+                //        Pname = item.Pname,
+                //        OId = order.Id,
+                //        Quantum = item.Quantum,
+                //        Price = item.Quantum * item.SalePrice
+                //});
                     
-                    db.SaveChanges();
-                }
-                Session.Remove("Cart");
+                //    db.SaveChanges();
+                //}
+                //Session.Remove("Cart");
                 return View("Done");
             }
             catch

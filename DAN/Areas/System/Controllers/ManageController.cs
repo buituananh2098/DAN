@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DAN.Areas.System.Models;
+using DAN.Helpers;
 
 namespace DAN.Areas.System.Controllers
 {   
@@ -13,10 +14,84 @@ namespace DAN.Areas.System.Controllers
     public class ManageController : Controller
     {
         DAN.Models.DANEntities db = new DAN.Models.DANEntities();
+       
         public ActionResult Index()
         {
             return View();
         }
+
+        public ActionResult ThongKeDT()
+        {
+            return View("ThongKeDT");
+        }
+
+        public ActionResult User(int page = 0)
+        {
+
+            //int numPerPage = 10;
+            //var model = db.Users.OrderByDescending(e => e.UId).Skip(page * numPerPage).Take(numPerPage);
+            //int total = db.Users.ToList().Count / numPerPage;
+            //ViewBag.total = total;
+            //ViewBag.currentPage = page;
+            var model = db.Users.ToList();
+            return View(model);
+            //return PartialView(model);
+        }
+
+        [HttpGet]
+        public ActionResult AddUser()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult AddUser(UserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new DAN.Models.User() { Uname = model.Uname, Upass = MyHelpers. Md5(model.Upass)};
+                db.Users.Add(user);
+                db.SaveChanges();
+                return RedirectToAction("User");
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult EditUser(int itemId, string act)
+        {
+            switch (act)
+            {
+                case "edit":
+                    var user = db.Users.Find(itemId);
+                    if (user == null)
+                        return RedirectToAction("User");
+                    var model = new UserViewModel()
+                    {
+                        Uname = user.Uname,
+                        Upass = MyHelpers.Md5(user.Upass)
+                    };
+                    return View(model);
+                case "delete":
+                    var users = db.Users.Find(itemId);
+                    db.Users.Remove(users);
+                    db.SaveChanges();
+                    return RedirectToAction("User");
+                default:
+                    Response.StatusCode = 404;
+                    return HttpNotFound();
+            }
+        }
+        [HttpPost]
+        public ActionResult EditUser(UserViewModel model)
+        {
+            var user = db.Users.Find(model.Uid);
+            user.Uname = model.Uname;
+            user.Upass = MyHelpers.Md5(user.Upass);
+            db.SaveChanges();
+            return RedirectToAction("User");
+        }
+
         [AjaxOnly]
         public ActionResult GetOrder(int page = 0)
         {

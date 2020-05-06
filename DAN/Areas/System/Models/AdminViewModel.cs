@@ -9,6 +9,21 @@ namespace DAN.Areas.System.Models
     public class AdminViewModel
     {
     }
+
+    public class UserViewModel
+    {
+        [Required(ErrorMessage = "Vui lòng nhập trường này")]
+        [Display(Name = "Tài khoản:")]
+        public string Uname { get; set; }
+        [Required(ErrorMessage = "Vui lòng nhập trường này")]
+        [Display(Name = "Mật khẩu:")]
+        public string Upass { get; set; }
+        [Required(ErrorMessage = "Vui lòng nhập trường này")]
+        [Display(Name = "Xác nhận mật khẩu:")]
+        public string Rpass { get; set; }
+        public long Uid { get; set; }
+    }
+
     public class LoginViewModel
     {
         [Required(ErrorMessage = "Vui lòng nhập trường này")]
