@@ -10,6 +10,12 @@ namespace DAN.Areas.System.Models
     {
     }
 
+    public class DatetimeViewModel
+    {
+        public string monthName { get; set; }
+        public int value { get; set; }
+    }
+
     public class UserViewModel
     {
         [Required(ErrorMessage = "Vui lòng nhập trường này")]

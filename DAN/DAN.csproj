@@ -205,6 +205,7 @@
     <Content Include="Areas\System\Views\Manage\AddSale.cshtml" />
     <Content Include="Areas\System\Views\Manage\EditSale.cshtml" />
     <Content Include="assets\Scripts\canvasjs.min.js" />
+    <Content Include="assets\Scripts\loader.js" />
     <Content Include="images\av4.png" />
     <Content Include="images\bo-dam_s1069.png" />
     <Content Include="images\chuoi-say_s1166.jpg" />

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DAN.Models;
-
 namespace DAN.Controllers
 {
     public class HomeController : Controller

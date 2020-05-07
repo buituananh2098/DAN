@@ -6,9 +6,30 @@ using System.Web;
 using System.Web.Mvc;
 using DAN.Areas.System.Models;
 using DAN.Helpers;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using System.Data.Entity.Core.Objects;
 
 namespace DAN.Areas.System.Controllers
-{   
+{
+    [DataContract]
+    public class DataPoint
+    {
+        public DataPoint(decimal x, decimal y)
+        {
+            this.X = x;
+            this.Y = y;
+        }
+
+        //Explicitly setting the name to be used while serializing to JSON.
+        [DataMember(Name = "x")]
+        public Nullable<decimal> X = null;
+
+        //Explicitly setting the name to be used while serializing to JSON.
+        [DataMember(Name = "y")]
+        public Nullable<decimal> Y = null;
+    }
+
     //[Authorize(Roles = "Admin")]
     [Authorize]
     public class ManageController : Controller
@@ -20,8 +41,63 @@ namespace DAN.Areas.System.Controllers
             return View();
         }
 
+        [HttpPost]
+        public ActionResult ThongKeTheoThang(DatetimeViewModel model)
+        {
+            if(model  != null)
+            {
+                int numMonth1 = model.value;
+                var getOrder = from s in db.Orders where s.CreatOn.Month == numMonth1
+                               orderby s.CreatOn descending
+                               select s.CreatOn;
+                List<DataPoint> listTotal = new List<DataPoint>();
+                var dateTim2 = getOrder.ToList().Select(x => x.Date).Distinct();
+                List<DateTime> listDate = dateTim2.ToList();
+                try
+                {
+                    for (int i = 0; i < listDate.Count(); i++)
+                    {
+                        var numDate1 = listDate[i].Day;
+                        var numYear2 = listDate[i].Year;
+                        var total2 = from s in db.Orders where (s.CreatOn.Day == numDate1 && s.CreatOn.Year == numYear2) select s.TotalPrice;
+                        decimal sumPrice = total2.Sum();
+                        listTotal.Add(new DataPoint(numDate1, sumPrice));
+
+                    }
+                }catch(Exception e)
+                {
+
+                }
+                List<DataPoint> dataPoints = new List<DataPoint>();
+                ViewBag.DataPoints = JsonConvert.SerializeObject(listTotal);
+
+            }
+            
+
+            return View("ThongKeDT");
+        }
+
+       
         public ActionResult ThongKeDT()
         {
+            var getOrder = from s in db.Orders 
+                           orderby s.CreatOn descending
+                           select  s.CreatOn;
+            List<DataPoint> listTotal = new List<DataPoint>();
+            var dateTim2 = getOrder.ToList().Select(x => x.Date).Distinct();
+            List<DateTime> listDate = dateTim2.ToList();
+            for(int i = 0; i < listDate.Count(); i++)
+            {
+                var numDate = listDate[i].Day;
+                var numMonth = listDate[i].Month;
+                var numYear = listDate[i].Year;
+                var total2 = from s in db.Orders where (s.CreatOn.Day == numDate &&  s.CreatOn.Month == numMonth && s.CreatOn.Year == numYear) select s.TotalPrice;
+                decimal sumPrice = total2.Sum();
+                listTotal.Add(new DataPoint(numDate, sumPrice));
+
+            }
+            List<DataPoint> dataPoints = new List<DataPoint>();
+            ViewBag.DataPoints = JsonConvert.SerializeObject(listTotal);
             return View("ThongKeDT");
         }
 
@@ -32,7 +108,7 @@ namespace DAN.Areas.System.Controllers
             //var model = db.Users.OrderByDescending(e => e.UId).Skip(page * numPerPage).Take(numPerPage);
             //int total = db.Users.ToList().Count / numPerPage;
             //ViewBag.total = total;
-            //ViewBag.currentPage = page;
+            //ViewBag.currentPage = page;sssssss
             var model = db.Users.ToList();
             return View(model);
             //return PartialView(model);
