@@ -15,17 +15,21 @@
     <div id="wrapper">
         @if (User.Identity.IsAuthenticated)
         {
-            @:Xin chào, @User.Identity.Name <a href="/System/Manage">Bảng điều khiển</a>|<a href="/System/Home/Logout">Thoát</a>
+            if (User.Identity.Name == "admin")
+            {
+                @:Xin chào, @User.Identity.Name <a href="/System/Manage">Bảng điều khiển</a>|
+            }
+            
         }
         <header id="header">
             <div class="container">
-                <div class="row"  style="width: 120% !important;">
+                <div class="row" style="width: 120% !important;">
                     <div class="col-lg-12">
                         <div class="col-md-5 col-sm-6 col-xs-12">
                             <a href="/"><div class="logo" style="background-image: url(/images/av4.png);"></div></a>
-                           
+
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4" style="padding-left: 0px;">
                             <b style="color:#339900; font-size: 48px;font-family:'Times New Roman', Times, serif;">ĐỒ ĂN VẶT TUẤN ANH </b>
                         </div>
                         <div class="col-md-3">
@@ -33,7 +37,20 @@
                                 Hotline: 0354122468
                             </span>
                             <span>
-                               <a href="/System/Home/Login" style="background-color: #339900; color: #FFF; padding: 10px;">Đăng nhập</a>
+                                @*<a href="" style="background-color: #339900; color: #FFF; padding: 10px;">Đăng nhập</a>*@
+                                @if (!User.Identity.IsAuthenticated)
+                                {
+                                    <h5 style="float: right">
+                                        <a style="background: #339900; border-radius: 20px; text-align: center;padding: 10px; color: #FFF;margin-right: 20px;" href="/System/Home/Login">
+                                            Đăng nhập
+                                        </a>
+                                    </h5>
+                                }
+                                else
+                                {
+                            <h5 style="float:left; #339900; border-radius: 20px; text-align: center;padding: 10px;margin-right: 20px;">Xin chào, @User.Identity.Name!  <a style="background-color: #009900; padding: 10px; border-radius: 10px;color: #FFF; font-weight: bold;" href="/System/Home/Logout">Thoát</a> </h5>
+                                  
+                                }
                             </span>
                         </div>
                     </div>
@@ -88,7 +105,7 @@
                                 @using (Html.BeginForm("SearchProduct", "Home", FormMethod.Get)) // -- phần thay đổi
                                 {
                                     <p>
-                                        @Html.TextBox("searchStr", null,new {style = "max-width:100% !important;",@placeholder = "Tìm kiếm"}) <input style="display: contents;" type="submit" value="Tìm kiếm" />
+                                        @Html.TextBox("searchStr", null, new { style = "max-width:100% !important;", @placeholder = "Tìm kiếm" }) <input style="display: contents;" type="submit" value="Tìm kiếm" />
                                     </p>
                                 }
                             </div>
@@ -131,6 +148,36 @@
         </footer>
         <div class="copyright"></div>
         <div id="up-arrow"></div>
+    </div>
+    <!-- Load Facebook SDK for JavaScript -->
+    <div id="fb-root"></div>
+    <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                xfbml: true,
+                version: 'v7.0'
+            });
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = 'https://connect.facebook.net/vi_VN/sdk/xfbml.customerchat.js';
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));</script>
+
+    <!-- Your customer chat code -->
+    <div class="fb-customerchat"
+         attribution=setup_tool
+         page_id="111729403863727"
+         theme_color="#13cf13"
+         logged_in_greeting="Chào bạn! Đồ ăn vặt Tuấn Anh có thể giúp gì cho bạn ?"
+         logged_out_greeting="Chào bạn! Đồ ăn vặt Tuấn Anh có thể giúp gì cho bạn ?">
+    </div>
+
+    <div class="fb-customerchat"
+         page_id="<PAGE_ID>">
     </div>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryval")

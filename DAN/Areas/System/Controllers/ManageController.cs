@@ -35,7 +35,8 @@ namespace DAN.Areas.System.Controllers
     public class ManageController : Controller
     {
         DAN.Models.DANEntities db = new DAN.Models.DANEntities();
-       
+
+
         public ActionResult Index()
         {
             return View();
@@ -44,7 +45,9 @@ namespace DAN.Areas.System.Controllers
         [HttpPost]
         public ActionResult ThongKeTheoThang(DatetimeViewModel model)
         {
-            if(model  != null)
+            int defaulDate = model.value;
+            decimal sumPrice1 = 0;
+            if (model  != null)
             {
                 int numMonth1 = model.value;
                 var getOrder = from s in db.Orders where s.CreatOn.Month == numMonth1
@@ -59,8 +62,10 @@ namespace DAN.Areas.System.Controllers
                     {
                         var numDate1 = listDate[i].Day;
                         var numYear2 = listDate[i].Year;
-                        var total2 = from s in db.Orders where (s.CreatOn.Day == numDate1 && s.CreatOn.Year == numYear2) select s.TotalPrice;
+                        var total1 = from s in db.Orders where (s.CreatOn.Month == numMonth1 && s.CreatOn.Year == numYear2) select s.TotalPrice;
+                        var total2 = from s in db.Orders where (s.CreatOn.Day == numDate1 && s.CreatOn.Month == numMonth1 && s.CreatOn.Year == numYear2) select s.TotalPrice;
                         decimal sumPrice = total2.Sum();
+                        sumPrice1 = total1.Sum();
                         listTotal.Add(new DataPoint(numDate1, sumPrice));
 
                     }
@@ -72,17 +77,20 @@ namespace DAN.Areas.System.Controllers
                 ViewBag.DataPoints = JsonConvert.SerializeObject(listTotal);
 
             }
-            
-
+            ViewBag.sumPrice1 = sumPrice1;
+            ViewBag.defaulDate = defaulDate;
             return View("ThongKeDT");
         }
 
        
         public ActionResult ThongKeDT()
-        {
-            var getOrder = from s in db.Orders 
+        { 
+            DateTime defaulDate1 =  DateTime.Now;
+            int defaulDate = Convert.ToInt32(defaulDate1.Month);
+            var getOrder = from s in db.Orders  where s.CreatOn.Month == defaulDate1.Month
                            orderby s.CreatOn descending
                            select  s.CreatOn;
+            decimal sumPrice1 = 0;
             List<DataPoint> listTotal = new List<DataPoint>();
             var dateTim2 = getOrder.ToList().Select(x => x.Date).Distinct();
             List<DateTime> listDate = dateTim2.ToList();
@@ -91,13 +99,17 @@ namespace DAN.Areas.System.Controllers
                 var numDate = listDate[i].Day;
                 var numMonth = listDate[i].Month;
                 var numYear = listDate[i].Year;
+                var total1 = from s in db.Orders where ( s.CreatOn.Month == numMonth && s.CreatOn.Year == numYear) select s.TotalPrice;
                 var total2 = from s in db.Orders where (s.CreatOn.Day == numDate &&  s.CreatOn.Month == numMonth && s.CreatOn.Year == numYear) select s.TotalPrice;
-                decimal sumPrice = total2.Sum();
-                listTotal.Add(new DataPoint(numDate, sumPrice));
+                sumPrice1 = total1.Sum();
+                decimal sumPrice2 = total2.Sum();
+                listTotal.Add(new DataPoint(numDate, sumPrice2));
 
             }
             List<DataPoint> dataPoints = new List<DataPoint>();
             ViewBag.DataPoints = JsonConvert.SerializeObject(listTotal);
+            ViewBag.defaulDate =  defaulDate;
+            ViewBag.sumPrice1 = sumPrice1;
             return View("ThongKeDT");
         }
 

@@ -252,6 +252,7 @@
     <Content Include="Areas\System\Views\Manage\AddUser.cshtml" />
     <Content Include="Areas\System\Views\Manage\EditUser.cshtml" />
     <Content Include="Areas\System\Views\Manage\ThongKeDT.cshtml" />
+    <Content Include="Areas\System\Views\Home\Register.cshtml" />
     <None Include="assets\Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="assets\Scripts\jquery-3.2.1.js" />
     <Content Include="assets\Scripts\jquery-3.2.1.min.js" />

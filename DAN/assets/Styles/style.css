@@ -545,13 +545,14 @@ body {
       position: relative;
       text-align: center;
       color: #fff; }
-      .product-sale .sale:after {
-        content: '';
-        left: 0;
-        position: absolute;
-        border: 10px solid transparent;
-        border-right: 10px solid #ff0000;
-        margin-left: -20px; }
+        .product-sale .sale:after {
+            content: '';
+            left: 0;
+            position: absolute;
+            border: 10px solid transparent;
+            border-right: 10px solid #339900;
+            margin-left: -20px;
+        }
 .product-number {
     font-weight: bold;
     color: #336633;
